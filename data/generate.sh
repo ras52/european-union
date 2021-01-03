@@ -9,7 +9,7 @@ fi
 
 ./process.py
 
-SCALE=2
+SCALE=3
 
 ogr2ogr -q -simplify $(echo "10^-$SCALE" | bc -l) -f GeoJSON \
   "../pub/eu-$SCALE.json" processed.json multipolygons 2>&1 \
