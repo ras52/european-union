@@ -134,9 +134,27 @@
         }
       });
 
+      var duration = 500;
+
+      function rgba(r,g,b,a) {
+        return 'rgba('+r+','+g+','+b+','+a+')';
+      }
+
       function addCountries(codes) {
         codes.forEach(function (code) { 
-          countries[code].setStyle(style); 
+          var c = countries[code]; 
+          c.setStyle(style); return;
+          var start = new Date().getTime();
+          var render = map.on('postrender', animate);
+          function animate(evt) {
+            var x = ol.easing.easeIn((evt.frameState.time - start) / duration);
+            c.setStyle(new ol.style.Style({ 
+             stroke: new ol.style.Stroke({color: rgba(0,51,153,1), width: 1}),
+             fill: new ol.style.Fill({color: rgba(0,51,153,0.2)}),
+            }));
+            if (x >= 1) ol.Observable.unByKey(render); 
+            else map.render();
+          };
         });
       }
 
@@ -167,7 +185,7 @@
             addCountries(['DE-1957']);
             break;
           case 1958: // Formation of the European Economic Community
-            // Overseas départements of France are now include
+            // Overseas départements of France are now included
             addCountries(['DZ', 'RE', 'GF', 'MQ', 'GP']); 
             break;
           case 1962: // Algerian independence
@@ -190,8 +208,9 @@
             addCountries(['PT','ES']);
             break;
           case 1990:
-            rmCountries(['DE-1957']);
+            rmCountries(['DE-1957', 'DE-WB']);
             addCountries(['DE-1990']);
+            break;
           case 1995:
             addCountries(['AT','SE','FI']);
             break; 
@@ -218,7 +237,7 @@
       var timer = setInterval(function () {
         setYear(++year);
         if (year >= 2020) clearInterval(timer);
-      }, 1000);
+      }, duration);
     </script>
   </body>
 </html>
